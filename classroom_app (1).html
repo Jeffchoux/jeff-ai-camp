@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeff's AI Camp - Learn AI Together</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .join-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .role-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .role-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .teacher-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .student-btn {
+            background: linear-gradient(45deg, #4834d4, #686de0);
+            color: white;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .room-input {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        input {
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            min-width: 200px;
+        }
+
+        input:focus {
+            border-color: #667eea;
+        }
+
+        .join-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #10ac84, #00d2d3);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .classroom {
+            display: none;
+        }
+
+        .classroom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #10ac84;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .share-screen {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .share-file {
+            background: #4834d4;
+            color: white;
+        }
+
+        .whiteboard {
+            background: #10ac84;
+            color: white;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .participants {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .participant {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .participant:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+
+        .participant.presenting {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #fff 0%, #ffe6e6 100%);
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .participant-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: #e6f3ff;
+            color: #0066cc;
+        }
+
+        .screen-preview {
+            width: 100%;
+            height: 150px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen-preview.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .participant-controls {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .mini-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn {
+            background: #10ac84;
+            color: white;
+        }
+
+        .request-btn {
+            background: #ff9ff3;
+            color: white;
+        }
+
+        .mini-btn:hover {
+            opacity: 0.8;
+        }
+
+        .file-share {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-drop {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .file-drop:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .shared-files {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .download-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .download-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .share-section {
+            background: linear-gradient(45deg, #10ac84, #00d2d3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .share-link {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            width: 100%;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            background: white;
+            color: #10ac84;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .devices-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .device-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-card {
+                padding: 20px;
+            }
+            
+            .role-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .room-input {
+                flex-direction: column;
+            }
+            
+            .participants {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Jeff's AI Camp</h1>
+            <p>Learn AI Together - Multi-Device Classroom</p>
+            <div class="devices-grid">
+                <div>
+                    <div class="device-icon">💻</div>
+                    <small>MacBook</small>
+                </div>
+                <div>
+                    <div class="device-icon">📱</div>
+                    <small>iPhone</small>
+                </div>
+                <div>
+                    <div class="device-icon">📱</div>
+                    <small>iPad</small>
+                </div>
+                <div>
+                    <div class="device-icon">🖥️</div>
+                    <small>PC</small>
+                </div>
+                <div>
+                    <div class="device-icon">📲</div>
+                    <small>Tablet</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="download-section">
+            <h2>📱 Get Jeff's AI Camp</h2>
+            <p>Download or save the app to use it offline on any device!</p>
+            <div class="download-buttons">
+                <a href="#" class="download-btn" onclick="downloadApp()">
+                    💾 Download App
+                </a>
+                <a href="#" class="download-btn" onclick="saveToDevice()">
+                    📱 Save to Device
+                </a>
+                <a href="#" class="download-btn" onclick="installPWA()">
+                    ⬇️ Install as App
+                </a>
+            </div>
+        </div>
+
+        <!-- Share Section -->
+        <div class="share-section">
+            <h3>📤 Share with WhatsApp</h3>
+            <p>Copy this link and send it to students via WhatsApp:</p>
+            <input type="text" class="share-link" id="shareLink" readonly 
+                   value="https://jeffs-ai-camp.app/join">
+            <br>
+            <button class="copy-btn" onclick="copyShareLink()">📋 Copy Link</button>
+            <button class="copy-btn" onclick="shareViaWhatsApp()" style="margin-left: 10px;">
+                💬 Share on WhatsApp
+            </button>
+        </div>
+
+        <!-- Join Room Section -->
+        <div class="main-card" id="joinSection">
+            <div class="join-section">
+                <h2>🚀 Join Jeff's AI Camp</h2>
+                
+                <div class="room-input">
+                    <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" id="userName" placeholder="Enter your name">
+                    </div>
+                    <div class="input-group">
+                        <label>Room Code (optional)</label>
+                        <input type="text" id="roomCode" placeholder="Leave empty to auto-join">
+                    </div>
+                    <button class="join-btn" onclick="joinRoom()">Join Room</button>
+                </div>
+                
+                <p style="margin-top: 20px; opacity: 0.7;">
+                    Everyone can present and learn together
+                </p>
+            </div>
+        </div>
+
+        <!-- Classroom Section -->
+        <div class="classroom" id="classroomSection">
+            <div class="main-card">
+                <div class="classroom-header">
+                    <div class="room-info">
+                        <div class="status-indicator"></div>
+                        <div>
+                            <h2 id="roomTitle">Room: ABC123</h2>
+                            <p id="userInfo">Connected as Teacher</p>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <button class="control-btn share-screen" onclick="shareScreen()">
+                            🖥️ Present Screen
+                        </button>
+                        <button class="control-btn share-file" onclick="shareFile()">
+                            📎 Share File
+                        </button>
+                        <button class="control-btn whiteboard" onclick="openWhiteboard()">
+                            📝 Whiteboard
+                        </button>
+                        <button class="control-btn" onclick="leaveRoom()" style="background: #ff6b6b;">
+                            🚪 Leave Room
+                        </button>
+                    </div>
+                </div>
+
+                <h3>Connected Participants</h3>
+                <div class="participants" id="participantsList">
+                    <!-- Participants will be added here -->
+                </div>
+
+                <h3>File Sharing</h3>
+                <div class="file-share">
+                    <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+                        <p>📁 Click or drag files here to share</p>
+                        <input type="file" id="fileInput" style="display: none" onchange="handleFileShare(this.files)">
+                    </div>
+                    <div class="shared-files" id="sharedFiles">
+                        <!-- Shared files will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <p id="notificationText"></p>
+    </div>
+
+    <script>
+        let currentUser = {
+            name: '',
+            room: '',
+            isPresenting: false
+        };
+
+        let participants = [];
+        let sharedFiles = [];
+
+        function selectRole(role) {
+            // Removed role selection - everyone is equal
+        }
+
+        function joinRoom() {
+            const name = document.getElementById('userName').value.trim();
+            let room = document.getElementById('roomCode').value.trim();
+            
+            if (!name) {
+                showNotification('Please enter your name!');
+                return;
+            }
+
+            // Auto-generate room if empty (same WiFi network simulation)
+            if (!room) {
+                room = 'WIFI-' + generateRoomCode();
+            }
+
+            currentUser.name = name;
+            currentUser.room = room;
+            
+            // Hide join section and show classroom
+            document.getElementById('joinSection').style.display = 'none';
+            document.getElementById('classroomSection').style.display = 'block';
+            
+            // Update UI
+            document.getElementById('roomTitle').textContent = `Room: ${room}`;
+            document.getElementById('userInfo').textContent = `Connected • ${name}`;
+            
+            // Add current user to participants
+            addParticipant(currentUser);
+            
+            // Simulate other participants joining
+            setTimeout(() => addDemoParticipants(), 1000);
+            
+            showNotification(`Welcome to Jeff's AI Camp! Room: ${room}`);
+        }
+
+        function generateRoomCode() {
+            return Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        function addParticipant(user) {
+            const participant = {
+                id: Date.now() + Math.random(),
+                name: user.name,
+                isPresenting: false,
+                device: getRandomDevice()
+            };
+            
+            participants.push(participant);
+            renderParticipants();
+        }
+
+        function addDemoParticipants() {
+            const demoUsers = [
+                { name: 'Emma Wilson' },
+                { name: 'James Chen' },
+                { name: 'Sofia Rodriguez' },
+                { name: 'Alex Kumar' }
+            ];
+            
+            demoUsers.forEach((user, index) => {
+                setTimeout(() => {
+                    addParticipant(user);
+                    showNotification(`${user.name} joined the room`);
+                }, index * 2000);
+            });
+        }
+
+        function getRandomDevice() {
+            const devices = ['💻 MacBook', '📱 iPhone', '📱 iPad', '🖥️ PC', '📲 Tablet'];
+            return devices[Math.floor(Math.random() * devices.length)];
+        }
+
+        function renderParticipants() {
+            const container = document.getElementById('participantsList');
+            container.innerHTML = '';
+            
+            participants.forEach(participant => {
+                const div = document.createElement('div');
+                div.className = `participant ${participant.isPresenting ? 'presenting' : ''}`;
+                
+                div.innerHTML = `
+                    <div class="participant-header">
+                        <span class="participant-name">${participant.name}</span>
+                        <span class="role-badge">Connected</span>
+                    </div>
+                    <div class="screen-preview ${participant.isPresenting ? 'active' : ''}">
+                        ${participant.isPresenting ? 
+                            '🎥 Presenting...' : 
+                            `${participant.device}<br><small>Ready to present</small>`
+                        }
+                    </div>
+                    <div class="participant-controls">
+                        <button class="mini-btn view-btn" onclick="viewParticipant('${participant.id}')">
+                            👁️ View
+                        </button>
+                        <button class="mini-btn request-btn" onclick="requestToPresent('${participant.id}')">
+                            🎤 Ask to Present
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(div);
+            });
+        }
+
+        function shareScreen() {
+            if (currentUser.isPresenting) {
+                currentUser.isPresenting = false;
+                showNotification('Screen sharing stopped');
+            } else {
+                // Stop others from presenting (only one presenter at a time)
+                participants.forEach(p => p.isPresenting = false);
+                currentUser.isPresenting = true;
+                
+                // Update current user in participants list
+                const userParticipant = participants.find(p => p.name === currentUser.name);
+                if (userParticipant) {
+                    userParticipant.isPresenting = true;
+                }
+                
+                showNotification('You are now presenting!');
+            }
+            renderParticipants();
+        }
+
+        function leaveRoom() {
+            // Reset everything
+            currentUser = { name: '', room: '', isPresenting: false };
+            participants = [];
+            sharedFiles = [];
+            
+            // Show join section
+            document.getElementById('joinSection').style.display = 'block';
+            document.getElementById('classroomSection').style.display = 'none';
+            
+            // Clear inputs
+            document.getElementById('userName').value = '';
+            document.getElementById('roomCode').value = '';
+            
+            showNotification('You have left the room');
+        }
+
+        function shareFile() {
+            document.getElementById('fileInput').click();
+        }
+
+        function handleFileShare(files) {
+            Array.from(files).forEach(file => {
+                const fileObj = {
+                    name: file.name,
+                    size: (file.size / 1024).toFixed(1) + ' KB',
+                    sharedBy: currentUser.name,
+                    time: new Date().toLocaleTimeString()
+                };
+                
+                sharedFiles.push(fileObj);
+                renderSharedFiles();
+                showNotification(`File "${file.name}" shared successfully!`);
+            });
+        }
+
+        function renderSharedFiles() {
+            const container = document.getElementById('sharedFiles');
+            container.innerHTML = '';
+            
+            sharedFiles.forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>📄 ${file.name}</strong><br>
+                        <small>Shared by ${file.sharedBy} • ${file.size} • ${file.time}</small>
+                    </div>
+                    <button class="mini-btn view-btn" onclick="downloadFile('${file.name}')">
+                        ⬇️ Download
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function openWhiteboard() {
+            showNotification('Whiteboard feature coming soon!');
+        }
+
+        function viewParticipant(participantId) {
+            const participant = participants.find(p => p.id == participantId);
+            showNotification(`Viewing ${participant.name}'s screen`);
+        }
+
+        function downloadFile(fileName) {
+            showNotification(`Downloading ${fileName}...`);
+        }
+
+        function requestToPresent(participantId) {
+            const participant = participants.find(p => p.id == participantId);
+            showNotification(`Asking ${participant.name} if they want to present`);
+        }
+
+        function downloadApp() {
+            // Create a downloadable HTML file
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'jeffs-ai-camp.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('App downloaded! You can now open it offline.');
+        }
+
+        function saveToDevice() {
+            if ('serviceWorker' in navigator) {
+                // Register service worker for offline functionality
+                navigator.serviceWorker.register('/sw.js').then(() => {
+                    showNotification('App cached for offline use!');
+                }).catch(() => {
+                    downloadApp(); // Fallback to download
+                });
+            } else {
+                downloadApp();
+            }
+        }
+
+        function installPWA() {
+            if (window.deferredPrompt) {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('App installed successfully!');
+                    }
+                    window.deferredPrompt = null;
+                });
+            } else {
+                showNotification('App installation not available. Try "Save to Device" instead.');
+            }
+        }
+
+        function copyShareLink() {
+            const linkInput = document.getElementById('shareLink');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            try {
+                document.execCommand('copy');
+                showNotification('Link copied to clipboard!');
+            } catch (err) {
+                // Fallback for newer browsers
+                navigator.clipboard.writeText(linkInput.value).then(() => {
+                    showNotification('Link copied to clipboard!');
+                }).catch(() => {
+                    showNotification('Please copy the link manually');
+                });
+            }
+        }
+
+        function shareViaWhatsApp() {
+            const message = encodeURIComponent(`🤖 Join Jeff's AI Camp! 
+
+Learn AI together in our interactive classroom. Click the link to join:
+
+https://jeffs-ai-camp.app/join
+
+📱 Works on any device - iPhone, Android, iPad, laptop!
+🚀 No download required, just click and join!`);
+            
+            const whatsappUrl = `https://wa.me/?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const text = document.getElementById('notificationText');
+            text.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Add drag and drop functionality
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileShare(files);
+            }
+        });
+
+        // PWA Installation prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+        });
+
+        // Add some demo shared files
+        setTimeout(() => {
+            sharedFiles.push(
+                {
+                    name: 'AI_Basics.pdf',
+                    size: '2.1 MB',
+                    sharedBy: 'Jeff',
+                    time: '10:30 AM'
+                },
+                {
+                    name: 'Practice_Exercise.docx',
+                    size: '450 KB',
+                    sharedBy: 'Emma Wilson',
+                    time: '10:25 AM'
+                }
+            );
+            renderSharedFiles();
+        }, 3000);
+    </script>
+</body>
+</html>
